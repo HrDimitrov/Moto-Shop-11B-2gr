@@ -1,9 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MVC.Services;
 
 namespace MVC.Controllers
 {
     public class ProductController : Controller
     {
+        private readonly Db _context;
+
+        public ProductController(Db context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
             return View();
@@ -11,17 +19,16 @@ namespace MVC.Controllers
 
         public IActionResult Details(int id)
         {
-            // Here you would typically fetch the product details from a database
-            // For demonstration, we'll create a dummy product
-            var product = new Models.Product
-            {
-                Id = 3,
-                Name = "O'Neal 11B SRS Slick",
-                Price = 1600,
-                Description = "Mega Zdrava",
-                Category = "Mega Scooter",
-                ImageUrl = "/images/helmet.png",
-            };
+            var referer = Request.Headers["Referer"].ToString(); 
+            ViewBag.Referer = string.IsNullOrEmpty(referer) ? Url.Action("Index", "Home") : referer;
+
+            var product = _context.Products
+        .Include(p => p.Images)
+        .FirstOrDefault(p => p.Id == id);
+
+            if (product == null)
+                return NotFound();
+
             return View(product);
         }
     }

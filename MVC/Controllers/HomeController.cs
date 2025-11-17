@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
+using MVC.Services;
 
 namespace MVC.Controllers;
 
@@ -8,54 +9,19 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    private readonly Db _context;
+
+    public HomeController(ILogger<HomeController> logger, Db context)
     {
         _logger = logger;
+        _context = context;
     }
 
     public IActionResult Index()
     {
-        var products = new List<Product>
-        {
-            new Product
-            {
-                Id = 1,
-                Name = "Yamaha 11B",
-                Price = 1500,
-                Description = "Mno'o vurvi",
-                Category = "Scooter",
-                ImageUrl = "/images/yamaha11b.png",
-            },
-            new Product
-            {
-                Id = 2,
-                Name = "KTM 11B",
-                Price = 1600,
-                Description = "Vurvi na ku4e",
-                Category = "Mega Scooter",
-                ImageUrl = "/images/ktm11b.png",
-            },
-            new Product
-            {
-                Id = 3,
-                Name = "VMX 11B",
-                Price = 1600,
-                Description = "Tarkalq na ku4e",
-                Category = "Mega Scooter",
-                ImageUrl = "/images/vmx11b.png",
-            },
-            new Product
-            {
-                Id = 3,
-                Name = "O'Neal 11B SRS Slick",
-                Price = 1600,
-                Description = "Mega Zdrava",
-                Category = "Mega Scooter",
-                ImageUrl = "/images/helmet.png",
-            }
-        };
+        var produtsFromDb = _context.Products.ToList();
 
-        return View(products);
+        return View(produtsFromDb);
     }
 
     public IActionResult Privacy()

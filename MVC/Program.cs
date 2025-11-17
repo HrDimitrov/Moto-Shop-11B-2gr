@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using MVC.Services;
+
 namespace MVC
 {
     public class Program
@@ -17,6 +20,14 @@ namespace MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+
+            // Add MySQL DbContext
+            builder.Services.AddDbContext<Db>(options =>
+                options.UseMySql(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+                ));
 
             var app = builder.Build();
 
