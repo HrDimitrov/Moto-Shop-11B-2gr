@@ -1,11 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MVC.Models;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MVC.Helpers;
+using MVC.Models;
+using MVC.Services;
 public class CartController : Controller
 {
-    // За опростяване използваме сесия. В реален проект – база данни.
+    private readonly Db _context;
     private const string SessionKey = "Cart";
 
+    public CartController(Db context)
+    {
+        _context = context;
+    }
     private List<CartItem> GetCart()
     {
         var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>(SessionKey);
@@ -24,27 +31,49 @@ public class CartController : Controller
     }
 
     [HttpPost]
-    public IActionResult Add(int ProductId, int quantity = 1)
+    public IActionResult Add(int productId, int quantity = 1)
     {
-        var cart = GetCart();
-        // В реален проект вземаш Product от база
-        var Product = new Product
-        {
-            Id = ProductId,
-            Name = "R1",
-            Price = 35000,
-            ImageUrl = "/images/yamaha_r1.jpg"
-        };
+        var product = _context.Products.FirstOrDefault(p => p.Id == productId);
 
-        var existing = cart.FirstOrDefault(c => c.Product.Id == ProductId);
+        if (product == null)
+            return NotFound();
+
+        if (product.Quantity < quantity)
+        {
+            TempData["Error"] = "Not enough stock!";
+            return RedirectToAction("Details", "Product", new { id = productId });
+        }
+
+        var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>(SessionKey)
+                   ?? new List<CartItem>();
+
+        var existing = cart.FirstOrDefault(c => c.Product.Id == productId);
+
         if (existing != null)
+        {
+            if (existing.Quantity + quantity > product.Quantity)
+            {
+                TempData["Error"] = "Not enough stock!";
+                return RedirectToAction("Details", "Product", new { id = productId });
+            }
+
             existing.Quantity += quantity;
+        }
         else
-            cart.Add(new CartItem { Product = Product, Quantity = quantity });
+        {
+            cart.Add(new CartItem
+            {
+                Product = product,
+                Quantity = quantity
+            });
+        }
 
         HttpContext.Session.SetObjectAsJson(SessionKey, cart);
+
         return RedirectToAction("Index");
     }
+
+
 
     [HttpPost]
     public IActionResult Remove(int ProductId)

@@ -50,3 +50,11 @@ img.rounded {
 .text-shadow {
     text-shadow: 0 4px 12px rgba(0,0,0,0.8);
 }
+.nav-link {
+    position: relative;
+}
+
+.badge {
+    font-size: 0.7rem;
+    padding: 4px 6px;
+}
