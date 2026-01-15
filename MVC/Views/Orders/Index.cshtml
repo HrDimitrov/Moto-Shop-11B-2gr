@@ -1,0 +1,14 @@
+﻿@model List<Order>
+
+<h2>My Orders</h2>
+
+@foreach (var o in Model)
+{
+    <div class="card mb-3 p-3">
+        <b>Order #@o.Id</b><br />
+        Date: @o.OrderDate<br />
+        Total: € @o.TotalAmount<br />
+        Status: @o.Status<br />
+        <a href="/Orders/Details/@o.Id">Details</a>
+    </div>
+}

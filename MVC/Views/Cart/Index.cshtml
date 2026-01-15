@@ -28,8 +28,10 @@
                     {
                         <tr>
                             <td>
+                                <a href="@Url.Action("Details", "Product", new { id = item.Product.Id })" class="text-decoration-none">
                                 <img src="@item.Product.ImageUrl" alt="@item.Product.Name"
                                      class="img-fluid" style="height: 60px; object-fit: cover;">
+                                     </a>
                             </td>
                             <td> @item.Product.Name</td>
                             <td>@item.Product.Price.ToString("N2") лв.</td>
@@ -59,7 +61,7 @@
         <div class="d-flex justify-content-end mt-4">
             <div class="text-end">
                 <h4 class="fw-bold">Общо: @Model.Sum(i => i.TotalPrice).ToString("N2") лв.</h4>
-                <a href="@Url.Action("Checkout", "Cart")" class="btn btn-success btn-lg mt-2">
+                <a href="@Url.Action("Index", "Checkout")" class="btn btn-success btn-lg mt-2">
                     🏁 Плати сега
                 </a>
             </div>

@@ -1,0 +1,12 @@
+﻿@model CheckoutViewModel
+
+<h2>Checkout</h2>
+
+<form asp-action="PlaceOrder" method="post">
+    <input class="form-control mb-2" name="CustomerName" placeholder="Name" required />
+    <input class="form-control mb-2" name="Email" placeholder="Email" required />
+    <input class="form-control mb-2" name="Phone" placeholder="Phone" />
+    <input class="form-control mb-3" name="Address" placeholder="Address" required />
+
+    <button class="btn btn-success">Place Order</button>
+</form>
